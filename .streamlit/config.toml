@@ -1,0 +1,6 @@
+[theme]
+primaryColor="#7a86cc" # Muted Cornflower Blue
+backgroundColor="#f0f2f5" # Light Grayish Blue
+secondaryBackgroundColor="#e0e3e8" # Lighter Grayish Blue
+textColor="#424242" # Dark Gray
+font="sans serif"
