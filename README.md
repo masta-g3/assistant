@@ -1,2 +1,2 @@
 # Assistant
-A GPT-based assistant with extensible plugins.g
+A GPT-based assistant with extensible plugins.
