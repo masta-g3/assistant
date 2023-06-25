@@ -1,2 +1,2 @@
-# Assistant
-A GPT-based assistant with extensible plugins.
+# Manager
+A GPT manager with extensible plugins.
