@@ -9,10 +9,17 @@ from langchain.schema import SystemMessage
 import tools
 
 
-class AssistantAgent:
-    def __init__(self, model_name: str, openai_api_key: str, tool_list: list = []):
+class Manager:
+    def __init__(
+        self,
+        model_name: str,
+        openai_api_key: str,
+        system_message: str = "You are a helpful AI assistant.",
+        tool_list: list = [],
+    ):
         """Initialize the agent manager."""
         self.openai_api_key = openai_api_key
+        self.system_message = system_message
         agent_tools = []
         for tool_name in tool_list:
             tool = tools.get_tools(tool_name)
@@ -39,9 +46,7 @@ class AssistantAgent:
         agent = OpenAIFunctionsAgent.from_llm_and_tools(
             llm=llm,
             tools=tools,
-            system_message=SystemMessage(
-                content="You are a smart buddhist assistant that uses markdown, tables, lists and many emojis to communicate."
-            ),
+            system_message=SystemMessage(content=self.system_message),
             extra_prompt_messages=[MessagesPlaceholder(variable_name="memory")],
         )
 

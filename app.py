@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from chatbot import AssistantAgent
+from chatbot import Manager
 
 # from callbacks import NewStreamlitCallbackHandler
 
@@ -14,13 +14,13 @@ def message_bubble(msg: str, is_user: bool = False, idx: int = 0):
         user_msg = f"#### Q{idx}: {msg}"
         st.markdown(user_msg, unsafe_allow_html=True)
     else:
-        assistant_msg = f"{msg}"
-        st.markdown(assistant_msg, unsafe_allow_html=True)
+        manager_msg = f"{msg}"
+        st.markdown(manager_msg, unsafe_allow_html=True)
 
 
 st.set_page_config(
     layout="wide",
-    page_title="Assistant",
+    page_title="Manager",
     page_icon="",
     initial_sidebar_state="expanded",
 )
@@ -31,8 +31,8 @@ if "generated" not in st.session_state:
 if "past" not in st.session_state:
     st.session_state["past"] = []
 
-if "assistant" not in st.session_state:
-    st.session_state["assistant"] = None
+if "manager" not in st.session_state:
+    st.session_state["manager"] = None
 
 if "handler" not in st.session_state:
     st.session_state["handler"] = None
@@ -45,7 +45,7 @@ if "openai_key" not in st.session_state:
 #############
 ## centered title on sidebar
 st.sidebar.markdown(
-    "<h1 style='text-align: center;'>Ask Assistant</h1>",
+    "<h1 style='text-align: center;'>Ask Manager</h1>",
     unsafe_allow_html=True,
 )
 
@@ -56,16 +56,16 @@ with sidebar_tabs[0]:
         "OpenAI API Key", type="password", value=os.environ.get("OPENAI_API_KEY", "")
     )
 
-    ## Form to customize Assistant.
+    ## Form to customize Manager.
     customize_form = st.form(key="customize_form")
-    customize_form.markdown("### Customize Assistant")
+    customize_form.markdown("### Customize Manager")
     llm_model = customize_form.selectbox(
         "LLM", ["gpt-3.5-turbo-0613", "gpt-4-0613"], index=0
     )
     system_message = customize_form.text_area(
         "System Message",
         value="You are a smart AI assistant that uses markdown and emojis to communicate. When asked a question, you reply as a great spiritual master in a clear and simple way, leveraging your knowledge on science, the Buddhist texts, the Tao Te Ching, Platonic texts, Bhagavad Gita, the Bible, and the Quran.",
-        help="Provide a custom system prompt to define Assistant's personality.",
+        help="Provide a custom system prompt to define Manager's personality.",
         height=10,
     )
     agent_tools = customize_form.multiselect(
@@ -84,12 +84,12 @@ with sidebar_tabs[0]:
             value=os.environ.get("SERPAPI_API_KEY", ""),
         )
 
-    if st.session_state["assistant"] is None:
-        reset_assistant = customize_form.form_submit_button("Load Assistant")
+    if st.session_state["manager"] is None:
+        reset_manager = customize_form.form_submit_button("Load Manager")
     else:
-        reset_assistant = customize_form.form_submit_button("Reset Assistant")
+        reset_manager = customize_form.form_submit_button("Reset Manager")
 
-    if reset_assistant:
+    if reset_manager:
         if len(openai_key) == 0:
             err_msg = st.error("Please provide an OpenAI API key.")
             time.sleep(2)
@@ -105,13 +105,13 @@ with sidebar_tabs[0]:
                 st.experimental_rerun()
             else:
                 os.environ["SERPAPI_API_KEY"] = serp_api_key
-        assistant = AssistantAgent(
+        manager = Manager(
             model_name=llm_model,
             openai_api_key=openai_key,
             system_message=system_message,
             tool_list=tool_list,
         )
-        st.session_state["assistant"] = assistant
+        st.session_state["manager"] = manager
 
 with sidebar_tabs[1]:
     ## Form to upload dataset and its description.
@@ -132,13 +132,13 @@ with sidebar_tabs[2]:
 ## MAIN APP ##
 ##############
 
-# st.markdown("# Chat with Assistant")
+# st.markdown("# Chat with Manger")
 text_input_placeholder = st.empty()
 
 
 def query(message):
-    assistant = st.session_state["assistant"]
-    response = assistant.run(message)  # , callbacks=[st.session_state["handler"]])
+    manager = st.session_state["manager"]
+    response = manager.run(message)  # , callbacks=[st.session_state["handler"]])
     # st.write(st.session_state['handler'].code_stream)
     # st.write(st.session_state['handler'].thought_stream)
     # response = "Hello! I am GPT Bento, I am here to help you with your data needs."
@@ -153,8 +153,8 @@ def get_text():
 
 
 def main():
-    if st.session_state["assistant"] is None:
-        st.markdown("# 🤖 Add OpenAI API key & load Assistant")
+    if st.session_state["manager"] is None:
+        st.markdown("# 🤖 Add OpenAI API key & load Manager")
         return
 
     user_input = get_text()
@@ -174,7 +174,7 @@ def main():
 
 if __name__ == "__main__":
     # if not st.session_state["agent"]:
-    # agent_manager = AssistantAgent(llm_model)
+    # agent_manager = Manager(llm_model)
     # handler = NewStreamlitCallbackHandler(st.empty(), thought_process_placeholder)
     # st.session_state["handler"] = handler
     # st.session_state["agent"] = agent_manager
